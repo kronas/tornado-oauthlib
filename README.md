@@ -71,10 +71,6 @@ class OAuth2Grant(Model):
     expires = DateTimeField()
     _scopes = TextField()
 
-    def delete(self):
-        self.delete_instance()
-        return self
-
     @property
     def scopes(self):
         if self._scopes:
@@ -92,10 +88,6 @@ class OAuth2BearerToken(Model):
     refresh_token = CharField(max_length=255, unique=True)
     expires = DateTimeField()
     _scopes = TextField()
-
-    def delete(self):
-        self.delete_instance()
-        return self
 
     @property
     def scopes(self):

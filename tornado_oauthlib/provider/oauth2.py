@@ -636,7 +636,7 @@ class OAuth2RequestValidator(RequestValidator):
         log.debug('Destroy grant token for client %r, %r', client_id, code)
         grant = self._grantgetter(client_id=client_id, code=code)
         if grant:
-            grant.delete()
+            grant.delete_instance()
 
     def save_authorization_code(self, client_id, code, request,
                                 *args, **kwargs):
@@ -850,7 +850,7 @@ class OAuth2RequestValidator(RequestValidator):
         if tok and tok.client_id == request.client.client_id:
             request.client_id = tok.client_id
             request.user = tok.user
-            tok.delete()
+            tok.delete_instance()
             return True
 
         msg = 'Invalid token supplied.'
