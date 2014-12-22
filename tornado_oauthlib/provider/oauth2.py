@@ -11,7 +11,8 @@ from oauthlib.common import to_unicode, add_params_to_uri, Request
 from oauthlib.oauth2 import FatalClientError, OAuth2Error, AccessDeniedError,\
     RequestValidator, Server
 
-from ..utils import decode_base64, create_response, import_string
+from ..utils import decode_base64, create_response, import_string,\
+    arguments_to_dict
 
 __all__ = ('OAuth2Provider', 'OAuth2RequestValidator')
 
@@ -266,7 +267,7 @@ class OAuth2Provider(object):
         log.debug('Found redirect_uri %s.', redirect_uri)
 
         uri, http_method, body, headers = handler.request.uri,\
-            handler.request.method, handler.request.body,\
+            handler.request.method, arguments_to_dict(handler),\
             handler.request.headers
         try:
             ret = server.create_authorization_response(
@@ -342,7 +343,7 @@ class OAuth2Provider(object):
         def get(handler, *args, **kwargs):
             server = self.server
             uri, http_method, body, headers = handler.request.uri,\
-                handler.request.method, handler.request.body,\
+                handler.request.method, arguments_to_dict(handler),\
                 handler.request.headers
             redirect_uri = handler.get_argument('redirect_uri', None)
             log.debug('Found redirect_uri %s.', redirect_uri)
@@ -391,8 +392,9 @@ class OAuth2Provider(object):
         def post(handler, *args, **kwargs):
             server = self.server
             uri, http_method, body, headers = handler.request.uri,\
-                handler.request.method, handler.request.body,\
+                handler.request.method, arguments_to_dict(handler),\
                 handler.request.headers
+            print(dir(arguments_to_dict(handler)))
             credentials = _post(handler, *args, **kwargs) or {}
             log.debug('Fetched extra credentials, %r.', credentials)
             ret = server.create_token_response(
@@ -425,7 +427,7 @@ class OAuth2Provider(object):
             if token:
                 handler.add_header('token', token)
             uri, http_method, body, headers = handler.request.uri,\
-                handler.request.method, handler.request.body,\
+                handler.request.method, arguments_to_dict(handler),\
                 handler.request.headers
             ret = server.create_revocation_response(
                 uri, headers=headers, body=body, http_method=http_method)
@@ -444,7 +446,7 @@ class OAuth2Provider(object):
                 return self.send_error()
         """
         uri, http_method, body, headers = handler.request.uri,\
-            handler.request.method, handler.request.body,\
+            handler.request.method, arguments_to_dict(handler),\
             handler.request.headers
         return self.server.verify_request(
             uri, http_method, body, headers, scopes

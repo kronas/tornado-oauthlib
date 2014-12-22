@@ -71,3 +71,10 @@ def import_string(import_name, silent=False):
     except ImportError as e:
         if not silent:
             raise
+
+
+def arguments_to_dict(handler):
+    args = {}
+    for k in handler.request.body_arguments.keys():
+        args[k] = ','.join(handler.get_arguments(k))
+    return args
