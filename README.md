@@ -161,7 +161,7 @@ def save_token(token, request, *args, **kwargs):
     for t in toks:
         t.delete_instance()
 
-    expires_in = token.pop('expires_in')
+    expires_in = token['expires_in']
     expires = datetime.utcnow() + timedelta(seconds=expires_in)
 
     tok = OAuth2BearerToken(
